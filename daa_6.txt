@@ -1,3 +1,6 @@
+//tital- knapsack for disaster relif resoures
+//name- Ankita Bharkade
+// Prn- 123B1F008
 #include <iostream>
 #include <vector>
 #include <iomanip>
@@ -67,4 +70,5 @@ int main() {
     }
 
     return 0;
+
 }
