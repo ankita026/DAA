@@ -1,3 +1,7 @@
+//quick sort for movie reccomandation sysytem
+//name- Ankita Bharkade
+// Prn- 123B1F008
+
 #include <iostream>
 #include <vector>
 #include <iomanip>
@@ -83,4 +87,5 @@ int main() {
     cout << "Time Complexity: O(n log n) on average.\n";
 
     return 0;
+
 }
