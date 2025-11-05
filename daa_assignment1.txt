@@ -1,4 +1,4 @@
-// Tital- merge sort for customer order sorting system
+// title- merge soft for customer order sorting sysytem
 // name- Ankita bharkade
 // prn- 123b1f008
 
