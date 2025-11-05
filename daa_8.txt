@@ -1,0 +1,121 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class SwiftShipTSP {
+    int numCities;
+    vector<vector<int>> distanceMatrix;
+    vector<vector<int>> fuelCostMatrix;
+    int maxDeliveryTime;
+
+    int minTotalCost = INT_MAX;
+    vector<int> optimalRoute;
+
+public:
+    SwiftShipTSP(int n, vector<vector<int>> dist, vector<vector<int>> fuel, int maxTime)
+        : numCities(n), distanceMatrix(dist), fuelCostMatrix(fuel), maxDeliveryTime(maxTime) {}
+
+    int calculateLowerBound(vector<bool> &visited, int currentCity) {
+        int bound = 0;
+        for (int city = 0; city < numCities; city++) {
+            if (!visited[city]) {
+                int minEdge = INT_MAX;
+                for (int next = 0; next < numCities; next++) {
+                    if (city != next && !visited[next]) {
+                        minEdge = min(minEdge, fuelCostMatrix[city][next]);
+                    }
+                }
+                if (minEdge != INT_MAX) bound += minEdge;
+            }
+        }
+        int minReturn = INT_MAX;
+        for (int city = 0; city < numCities; city++) {
+            if (!visited[city])
+                minReturn = min(minReturn, fuelCostMatrix[city][0]);
+        }
+        if (minReturn != INT_MAX) bound += minReturn;
+        return bound;
+    }
+
+    int calculateTotalTime(vector<int> &route) {
+        int totalTime = 0;
+        for (int i = 0; i < (int)route.size() - 1; i++)
+            totalTime += distanceMatrix[route[i]][route[i + 1]];
+        if (!route.empty()) totalTime += distanceMatrix[route.back()][0];
+        return totalTime;
+    }
+
+    void branchAndBound(vector<int> &currentRoute, vector<bool> &visited, int currentCity, int currentCost) {
+        if ((int)currentRoute.size() == numCities) {
+            int totalCost = currentCost + fuelCostMatrix[currentCity][0];
+            int totalTime = calculateTotalTime(currentRoute) + distanceMatrix[currentCity][0];
+
+            if (totalCost < minTotalCost && totalTime <= maxDeliveryTime) {
+                minTotalCost = totalCost;
+                optimalRoute = currentRoute;
+                optimalRoute.push_back(0);
+            }
+            return;
+        }
+
+        for (int nextCity = 0; nextCity < numCities; nextCity++) {
+            if (!visited[nextCity]) {
+                int nextCost = currentCost + fuelCostMatrix[currentCity][nextCity];
+                int lowerBound = nextCost + calculateLowerBound(visited, nextCity);
+
+                if (lowerBound < minTotalCost) {
+                    visited[nextCity] = true;
+                    currentRoute.push_back(nextCity);
+
+                    branchAndBound(currentRoute, visited, nextCity, nextCost);
+
+                    visited[nextCity] = false;
+                    currentRoute.pop_back();
+                }
+            }
+        }
+    }
+
+    void findOptimalRoute() {
+        auto start = chrono::high_resolution_clock::now();
+
+        vector<bool> visited(numCities, false);
+        vector<int> currentRoute;
+        visited[0] = true;
+        currentRoute.push_back(0);
+
+        branchAndBound(currentRoute, visited, 0, 0);
+
+        auto end = chrono::high_resolution_clock::now();
+        auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
+
+        cout << "Optimal Delivery Route (City Indexes): ";
+        for (int c : optimalRoute) cout << c << " ";
+        cout << "\nMinimum Total Fuel Cost: " << minTotalCost;
+        cout << "\nEstimated Delivery Time (km proxy): " << calculateTotalTime(optimalRoute);
+        cout << "\nTime Taken: " << duration.count() << " milliseconds\n";
+    }
+};
+
+int main() {
+    int numCities = 4;
+
+    vector<vector<int>> distanceMatrix = {
+        {0, 10, 15, 20},
+        {10, 0, 35, 25},
+        {15, 35, 0, 30},
+        {20, 25, 30, 0}
+    };
+
+    vector<vector<int>> fuelCostMatrix = {
+        {0, 5, 8, 7},
+        {5, 0, 12, 10},
+        {8, 12, 0, 6},
+        {7, 10, 6, 0}
+    };
+
+    int maxDeliveryTime = 100;
+
+    SwiftShipTSP optimizer(numCities, distanceMatrix, fuelCostMatrix, maxDeliveryTime);
+    optimizer.findOptimalRoute();
+    return 0;
+}
