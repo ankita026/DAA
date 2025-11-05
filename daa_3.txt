@@ -1,3 +1,7 @@
+//Title- fractional knapsack for emergency reciver supply
+//name- Ankita Bharkade
+// Prn- 123B1F008
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -78,4 +82,5 @@ int main() {
     cout << "Maximum utility value the boat can carry: " << totalUtility << endl;
 
     return 0;
+
 }
