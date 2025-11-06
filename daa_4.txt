@@ -1,4 +1,4 @@
-//titel- dijkstra for smart traffic management
+//title- dijkstra for smart traffic management
 //name- Ankita Bharkade
 // Prn- 123B1F008
 #include <iostream>
@@ -91,3 +91,4 @@ int main() {
     return 0;
 
 }
+
